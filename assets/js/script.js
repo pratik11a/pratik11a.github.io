@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Initialize blogs section with blog components
                 const container = element.querySelector('#blogs-container');
                 if (container) {
-                    blogData.forEach(data => {
+                    for (const data of blogData) {
                         const li = document.createElement('li');
-                        li.innerHTML = blogComponent.render(data);
+                        li.innerHTML = await blogComponent.render(data);
                         container.appendChild(li);
-                    });
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 class BlogComponent {
     constructor() {
         this.template = '';
+        this.markdownCache = new Map();
     }
 
     async loadTemplate() {
@@ -12,11 +13,30 @@ class BlogComponent {
         }
     }
 
-    render(data) {
+    async loadMarkdown(markdownFile) {
+        if (this.markdownCache.has(markdownFile)) {
+            return this.markdownCache.get(markdownFile);
+        }
+
+        try {
+            const response = await fetch(markdownFile);
+            const markdown = await response.text();
+            const html = MarkdownParser.parse(markdown);
+            this.markdownCache.set(markdownFile, html);
+            return html;
+        } catch (error) {
+            console.error('Error loading markdown file:', error);
+            return '<p>Error loading blog content.</p>';
+        }
+    }
+
+    async render(data) {
+        const description = await this.loadMarkdown(data.markdownFile);
+        
         return this.template
             .replace(/\${id}/g, data.id)
             .replace(/\${title}/g, data.title)
             .replace(/\${date}/g, data.date)
-            .replace(/\${description}/g, data.description);
+            .replace(/\${description}/g, description);
     }
 }
