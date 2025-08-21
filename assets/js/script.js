@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Initialize blogs section with blog components
                 const container = element.querySelector('#blogs-container');
                 if (container) {
-                    for (const data of blogData) {
+                    blogData.forEach(data => {
                         const li = document.createElement('li');
-                        li.innerHTML = await blogComponent.render(data);
+                        li.innerHTML = blogComponent.render(data);
                         container.appendChild(li);
-                    }
+                    });
                 }
             }
         }
@@ -62,11 +62,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Set up click handlers for job and blog descriptions
-    document.addEventListener('click', (e) => {
+    // Set up click handlers for job descriptions and blog modals
+    document.addEventListener('click', async (e) => {
         const jobTitle = e.target.closest('.job-title');
         const blogTitle = e.target.closest('.blog-title');
+        const modalClose = e.target.closest('.modal-close');
+        const modalOverlay = e.target.closest('.modal-overlay');
         
+        // Handle job title clicks (keep existing accordion behavior)
         if (jobTitle) {
             const isExpanded = jobTitle.getAttribute('aria-expanded') === 'true';
             jobTitle.setAttribute('aria-expanded', !isExpanded);
@@ -79,36 +82,69 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         
+        // Handle blog title clicks (open modal)
         if (blogTitle) {
-            const isExpanded = blogTitle.getAttribute('aria-expanded') === 'true';
+            const blogId = blogTitle.getAttribute('data-blog-id');
+            const blogTitleText = blogTitle.getAttribute('data-blog-title');
+            const blogDate = blogTitle.getAttribute('data-blog-date');
             
-            // If clicking on a collapsed blog, first collapse all other blogs
-            if (!isExpanded) {
-                // Find all blog titles and collapse them
-                const allBlogTitles = document.querySelectorAll('.blog-title');
-                allBlogTitles.forEach(title => {
-                    if (title !== blogTitle) {
-                        title.setAttribute('aria-expanded', 'false');
-                        title.classList.remove('expanded');
-                        
-                        const desc = document.getElementById(title.getAttribute('aria-controls'));
-                        if (desc) {
-                            desc.classList.remove('expanded');
-                            desc.setAttribute('aria-hidden', 'true');
-                        }
-                    }
-                });
-            }
-            
-            // Toggle the clicked blog
-            blogTitle.setAttribute('aria-expanded', !isExpanded);
-            blogTitle.classList.toggle('expanded');
-            
-            const description = document.getElementById(blogTitle.getAttribute('aria-controls'));
-            if (description) {
-                description.classList.toggle('expanded');
-                description.setAttribute('aria-hidden', isExpanded);
+            // Find the blog data
+            const blog = blogData.find(b => b.id === blogId);
+            if (blog) {
+                await openBlogModal(blog, blogTitleText, blogDate);
             }
         }
+        
+        // Handle modal close
+        if (modalClose || modalOverlay) {
+            closeBlogModal();
+        }
     });
+    
+    // Handle escape key to close modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeBlogModal();
+        }
+    });
+    
+    // Modal functions
+    async function openBlogModal(blog, title, date) {
+        const modal = document.getElementById('blog-modal');
+        const modalTitle = document.getElementById('modal-blog-title');
+        const modalDate = document.getElementById('modal-blog-date');
+        const modalContent = document.getElementById('modal-blog-content');
+        
+        // Set title and date
+        modalTitle.textContent = title;
+        modalDate.textContent = date;
+        
+        // Load and parse markdown content
+        try {
+            const markdown = await blogComponent.loadMarkdown(blog.markdownFile);
+            modalContent.innerHTML = markdown;
+        } catch (error) {
+            modalContent.innerHTML = '<p>Error loading blog content.</p>';
+        }
+        
+        // Show modal
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        
+        // Focus management
+        const closeButton = modal.querySelector('.modal-close');
+        closeButton.focus();
+        
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeBlogModal() {
+        const modal = document.getElementById('blog-modal');
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+    }
 });

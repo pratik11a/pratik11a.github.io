@@ -1,9 +1,6 @@
 <div class="blog-item">
     <div class="blog-header">
-        <button class="blog-title" aria-expanded="false" aria-controls="blog-desc-${id}">${title}</button>
+        <button class="blog-title" data-blog-id="${id}" data-blog-title="${title}" data-blog-date="${date}">${title}</button>
         <time class="blog-date">${date}</time>
-    </div>
-    <div class="blog-description" id="blog-desc-${id}" aria-hidden="true">
-        ${description}
     </div>
 </div>

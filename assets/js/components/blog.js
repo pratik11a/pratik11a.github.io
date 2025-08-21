@@ -30,13 +30,10 @@ class BlogComponent {
         }
     }
 
-    async render(data) {
-        const description = await this.loadMarkdown(data.markdownFile);
-        
+    render(data) {
         return this.template
             .replace(/\${id}/g, data.id)
             .replace(/\${title}/g, data.title)
-            .replace(/\${date}/g, data.date)
-            .replace(/\${description}/g, description);
+            .replace(/\${date}/g, data.date);
     }
 }
