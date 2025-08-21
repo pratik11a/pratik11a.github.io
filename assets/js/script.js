@@ -81,6 +81,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         if (blogTitle) {
             const isExpanded = blogTitle.getAttribute('aria-expanded') === 'true';
+            
+            // If clicking on a collapsed blog, first collapse all other blogs
+            if (!isExpanded) {
+                // Find all blog titles and collapse them
+                const allBlogTitles = document.querySelectorAll('.blog-title');
+                allBlogTitles.forEach(title => {
+                    if (title !== blogTitle) {
+                        title.setAttribute('aria-expanded', 'false');
+                        title.classList.remove('expanded');
+                        
+                        const desc = document.getElementById(title.getAttribute('aria-controls'));
+                        if (desc) {
+                            desc.classList.remove('expanded');
+                            desc.setAttribute('aria-hidden', 'true');
+                        }
+                    }
+                });
+            }
+            
+            // Toggle the clicked blog
             blogTitle.setAttribute('aria-expanded', !isExpanded);
             blogTitle.classList.toggle('expanded');
             
