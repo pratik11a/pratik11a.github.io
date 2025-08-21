@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize components
     const companyComponent = new CompanyComponent();
     await companyComponent.loadTemplate();
+    
+    const blogComponent = new BlogComponent();
+    await blogComponent.loadTemplate();
 
     const sections = [
         { id: 'header', path: 'assets/html/header.html' },
@@ -25,7 +28,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
         { id: 'domains', path: 'assets/html/domains.html' },
         { id: 'education', path: 'assets/html/education.html' },
-        { id: 'projects', path: 'assets/html/projects.html' }
+        { id: 'projects', path: 'assets/html/projects.html' },
+        { 
+            id: 'blogs', 
+            path: 'assets/html/blogs.html',
+            postProcess: async (element) => {
+                // Initialize blogs section with blog components
+                const container = element.querySelector('#blogs-container');
+                if (container) {
+                    blogData.forEach(data => {
+                        const li = document.createElement('li');
+                        li.innerHTML = blogComponent.render(data);
+                        container.appendChild(li);
+                    });
+                }
+            }
+        }
     ];
 
     for (const section of sections) {
@@ -44,15 +62,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Set up click handlers for job descriptions
+    // Set up click handlers for job and blog descriptions
     document.addEventListener('click', (e) => {
         const jobTitle = e.target.closest('.job-title');
+        const blogTitle = e.target.closest('.blog-title');
+        
         if (jobTitle) {
             const isExpanded = jobTitle.getAttribute('aria-expanded') === 'true';
             jobTitle.setAttribute('aria-expanded', !isExpanded);
             jobTitle.classList.toggle('expanded');
             
             const description = document.getElementById(jobTitle.getAttribute('aria-controls'));
+            if (description) {
+                description.classList.toggle('expanded');
+                description.setAttribute('aria-hidden', isExpanded);
+            }
+        }
+        
+        if (blogTitle) {
+            const isExpanded = blogTitle.getAttribute('aria-expanded') === 'true';
+            blogTitle.setAttribute('aria-expanded', !isExpanded);
+            blogTitle.classList.toggle('expanded');
+            
+            const description = document.getElementById(blogTitle.getAttribute('aria-controls'));
             if (description) {
                 description.classList.toggle('expanded');
                 description.setAttribute('aria-hidden', isExpanded);

@@ -115,6 +115,61 @@ body {
 .section .job-description.expanded {
     display: block;
 }
+
+/* Blog styles */
+.section .blog-title {
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 1rem;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.section .blog-title::before {
+    content: '▶';
+    display: inline-block;
+    font-size: 0.8em;
+    margin-right: 6px;
+    transition: transform 0.2s ease;
+}
+
+.section .blog-title.expanded::before {
+    transform: rotate(90deg);
+}
+
+.section .blog-description {
+    display: none;
+    margin-top: 8px;
+    padding-left: 14px;
+    border-left: 2px solid #e0e0e0;
+}
+
+.section .blog-description.expanded {
+    display: block;
+}
+
+.section .blog-header {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.section .blog-date {
+    color: #888;
+    font-size: 0.95em;
+    margin-left: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
 .section .company {
     color: #2d6cdf;
     text-decoration: none;
@@ -255,6 +310,21 @@ body {
     .section .job-header .date::after {
         content: " ";
     }
+    .section .blog-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .section .blog-header .blog-title {
+        order: 1;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+    .section .blog-header .blog-date {
+        order: 2;
+        margin-left: 0;
+        font-size: 0.85em;
+    }
     .skills-list {
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -281,6 +351,19 @@ body {
         font-weight: bold;
         color: #333;
     }
+    .blogs-list {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    .blogs-list li {
+        word-break: break-word;
+        line-height: 1.6;
+        margin-bottom: 8px;
+    }
+    .blogs-list li strong {
+        font-weight: bold;
+        color: #333;
+    }
 }
 
 .domains-list {
@@ -297,6 +380,24 @@ body {
 }
 
 .domains-list li strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.blogs-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.blogs-list li {
+    margin-bottom: 8px;
+    color: #666666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.blogs-list li strong {
     font-weight: bold;
     color: #333;
 }
