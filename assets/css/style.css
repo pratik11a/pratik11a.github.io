@@ -128,7 +128,7 @@ body {
     padding: 0;
     font-size: 1rem;
     margin: 0;
-    text-decoration: underline;
+    text-decoration: none;
     transition: color 0.2s ease;
 }
 
