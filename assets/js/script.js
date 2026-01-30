@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const blogComponent = new BlogComponent();
     await blogComponent.loadTemplate();
+    
+    // Set up print button handler
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#print-button')) {
+            window.print();
+        }
+    });
 
     const sections = [
         { id: 'header', path: 'assets/html/header.html' },

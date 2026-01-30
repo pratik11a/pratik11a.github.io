@@ -20,6 +20,7 @@ body {
     margin: -40px -32px 24px -32px;
     border-radius: 12px 12px 0 0;
     color: white;
+    position: relative;
 }
 .avatar {
     width: 120px;
@@ -718,4 +719,90 @@ body {
 .blogs-list li strong {
     font-weight: bold;
     color: #333;
+}
+
+/* Print Button Styles */
+.print-button {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.print-button:hover {
+    background: white;
+    color: skyblue;
+    transform: scale(1.05);
+}
+
+.print-button:active {
+    transform: scale(0.95);
+}
+
+/* Print Media Queries */
+@media print {
+    /* Hide the print button when printing */
+    .print-button {
+        display: none !important;
+    }
+    
+    /* Hide the entire Blogs section */
+    #blogs-placeholder {
+        display: none !important;
+    }
+    
+    /* Hide modal when printing */
+    .modal {
+        display: none !important;
+    }
+    
+    /* Expand all job descriptions */
+    .section .job-description {
+        display: block !important;
+    }
+    
+    /* Hide the expand arrow for job titles */
+    .section .job-title::before {
+        display: none !important;
+    }
+    
+    /* Style job titles for print */
+    .section .job-title {
+        cursor: default;
+        background: transparent;
+        border: none;
+        padding: 0;
+        font-weight: bold;
+    }
+    
+    /* Optimize for print */
+    body {
+        background: white;
+    }
+    
+    .resume-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    /* Prevent page breaks inside sections */
+    .section {
+        page-break-inside: avoid;
+    }
+    
+    /* Adjust header for print */
+    .header {
+        margin: -20px -20px 20px -20px;
+        page-break-after: avoid;
+    }
 }
