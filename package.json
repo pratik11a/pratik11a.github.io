@@ -4,16 +4,16 @@
   "description": "Personal portfolio website with responsive design",
   "main": "index.html",
   "scripts": {
-    "test": "node tests/company.test.js",
-    "test:watch": "nodemon tests/company.test.js",
-    "test:ci": "node tests/company.test.js",
-    "serve": "python3 -m http.server 8080",
-    "serve:dev": "python3 -m http.server 8000",
-    "validate:js": "find . -name '*.js' -not -path './node_modules/*' -exec node -c {} \\;",
+    "test": "bun tests/company.test.js",
+    "test:watch": "bun --watch tests/company.test.js",
+    "test:ci": "bun tests/company.test.js",
+    "serve": "PORT=8080 bun run server.js",
+    "serve:dev": "PORT=8000 bun run server.js",
+    "validate:js": "bun run scripts/validate-js.js",
     "validate:html": "echo 'HTML validation would run here'",
     "validate:css": "echo 'CSS validation would run here'",
-    "validate": "npm run validate:js && npm run validate:html && npm run validate:css",
-    "ci": "npm run validate && npm test",
+    "validate": "bun run validate:js && bun run validate:html && bun run validate:css",
+    "ci": "bun run validate && bun run test",
     "build": "echo 'Static site - no build step needed'",
     "deploy": "echo 'Ready for deployment to GitHub Pages or other static hosting'"
   },
@@ -26,14 +26,12 @@
   ],
   "author": "Pratik Adhau",
   "license": "MIT",
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pratik11a/pratik11a.git"
   },
   "engines": {
-    "node": ">=14.0.0"
-  }
+    "bun": ">=1.2.0"
+  },
+  "packageManager": "bun@1.2.14"
 }
