@@ -19,25 +19,23 @@ Comprehensive unit tests for the `CompanyComponent` class that handles rendering
 ## Running Tests
 
 ### Prerequisites
-- Node.js (>=14.0.0)
+- Bun (>=1.2.0)
 
 ### Commands
 
 ```bash
 # Run all tests
-npm test
+bun test
 
-# Run tests with watch mode (requires nodemon)
-npm run test:watch
+# Run tests with watch mode
+bun run test:watch
 
 # Run specific test file
-node tests/company.test.js
+bun tests/company.test.js
 ```
 
 ### Manual Installation for Watch Mode
-```bash
-npm install nodemon --save-dev
-```
+No extra dependency is needed with Bun.
 
 ## Test Framework
 

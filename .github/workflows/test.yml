@@ -9,67 +9,51 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x, 20.x]
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
+        bun-version: latest
+
     - name: Install dependencies
-      run: |
-        if [ -f package-lock.json ]; then
-          npm ci --include=dev || npm install
-        else
-          npm install
-        fi
-      
+      run: bun install --frozen-lockfile
+
     - name: Run unit tests
-      run: npm test
-      
+      run: bun run test
+
     - name: Generate test report
       if: always()
       run: |
         echo "## Test Results 🧪" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Tests completed for Node.js ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        if [ $? -eq 0 ]; then
-          echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "❌ Some tests failed!" >> $GITHUB_STEP_SUMMARY
-        fi
+        echo "Tests completed using Bun" >> $GITHUB_STEP_SUMMARY
 
   lint:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: '18.x'
-        
+        bun-version: latest
+
     - name: Check JavaScript syntax
       run: |
         echo "Checking JavaScript files for syntax errors..."
-        find . -name "*.js" -not -path "./node_modules/*" -exec node -c {} \;
+        bun run validate:js
         echo "✅ All JavaScript files have valid syntax"
-        
+
     - name: Check for TODO comments in code
       run: |
         echo "Checking for TODO comments in JavaScript files..."
-        if grep -r "TODO\|FIXME\|HACK" --include="*.js" assets/ tests/ || true; then
+        if grep -r "TODO\|FIXME\|HACK" --include="*.js" assets/ tests/; then
           echo "⚠️  Found TODO/FIXME/HACK comments - consider addressing them"
         else
           echo "✅ No TODO/FIXME/HACK comments found"
@@ -78,24 +62,19 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: '18.x'
-        
+        bun-version: latest
+
     - name: Install dependencies
-      run: |
-        if [ -f package-lock.json ]; then
-          npm ci --include=dev || npm install
-        else
-          npm install
-        fi
-      
+      run: bun install --frozen-lockfile
+
     - name: Run tests with detailed output
       run: |
         echo "## Test Coverage Report 📊" >> $GITHUB_STEP_SUMMARY
@@ -110,37 +89,33 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**Total Tests:** 12" >> $GITHUB_STEP_SUMMARY
         echo "**Coverage:** Constructor, Template Loading, Rendering, Error Handling" >> $GITHUB_STEP_SUMMARY
-        
-        npm test
+
+        bun run test
 
   security:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Security audit
       run: |
         echo "## Security Audit 🔒" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        
-        # Check for common security issues in package.json
+
         if [ -f "package.json" ]; then
           echo "✅ package.json exists and is readable" >> $GITHUB_STEP_SUMMARY
-          
-          # Check for scripts that might be risky
+
           if grep -q "postinstall\|preinstall" package.json; then
             echo "⚠️  Found install scripts - review for security" >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ No risky install scripts found" >> $GITHUB_STEP_SUMMARY
           fi
-          
-          # Check for dev dependencies in production
+
           echo "✅ Development dependencies properly separated" >> $GITHUB_STEP_SUMMARY
         fi
-        
-        # Check for exposed sensitive files
+
         if find . -name "*.key" -o -name "*.pem" -o -name ".env" | grep -v node_modules; then
           echo "⚠️  Found potential sensitive files" >> $GITHUB_STEP_SUMMARY
         else

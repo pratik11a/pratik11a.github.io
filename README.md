@@ -49,13 +49,13 @@ The portfolio includes a comprehensive test suite with **100% pass rate**:
 
 ```bash
 # Run tests locally
-npm test
+bun test
 
 # Watch mode for development
-npm run test:watch
+bun run test:watch
 
 # CI pipeline tests
-npm run ci
+bun run ci
 ```
 
 ### 📊 Test Coverage
@@ -77,13 +77,13 @@ git clone https://github.com/pratik11a/pratik11a.git
 cd pratik11a
 
 # Install dependencies (for testing)
-npm install
+bun install
 
 # Run tests
-npm test
+bun test
 
 # Start local development server
-npm run serve:dev
+bun run serve:dev
 # Visit http://localhost:8000
 ```
 
@@ -91,13 +91,13 @@ npm run serve:dev
 
 ```bash
 # Validate all JavaScript files
-npm run validate:js
+bun run validate:js
 
 # Run full validation suite
-npm run validate
+bun run validate
 
 # CI pipeline simulation
-npm run ci
+bun run ci
 ```
 
 ### 📱 Responsive Features
@@ -132,7 +132,7 @@ The portfolio uses GitHub Actions for:
 - **Code Validation** - JavaScript syntax and structure checks
 - **Accessibility Testing** - ARIA compliance and semantic HTML validation
 - **Security Scanning** - Basic security audit for dependencies
-- **Multi-Node Testing** - Compatibility testing across Node.js versions
+- **Bun-Based Testing** - Fast runtime checks using Bun in CI
 
 ### 🤝 Contact
 

@@ -11,29 +11,23 @@ on:
 jobs:
   generate-badge:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: 📥 Checkout repository
       uses: actions/checkout@v4
-      
-    - name: 🟢 Setup Node.js
-      uses: actions/setup-node@v4
+
+    - name: 🥟 Setup Bun
+      uses: oven-sh/setup-bun@v2
       with:
-        node-version: '18.x'
-        
-    - name: 📦 Install dependencies (if needed)
-      run: |
-        if [ -f package-lock.json ]; then
-          npm ci --include=dev || npm install
-        else
-          npm install
-        fi
-        
+        bun-version: latest
+
+    - name: 📦 Install dependencies
+      run: bun install --frozen-lockfile
+
     - name: 🧪 Run tests and capture results
       id: test_results
       run: |
-        # Run tests and capture output
-        if npm test > test_output.txt 2>&1; then
+        if bun run test > test_output.txt 2>&1; then
           echo "tests_passed=true" >> $GITHUB_OUTPUT
           echo "badge_color=brightgreen" >> $GITHUB_OUTPUT
           echo "badge_message=passing" >> $GITHUB_OUTPUT
@@ -42,46 +36,18 @@ jobs:
           echo "badge_color=red" >> $GITHUB_OUTPUT
           echo "badge_message=failing" >> $GITHUB_OUTPUT
         fi
-        
-        # Extract test count
+
         TOTAL_TESTS=$(grep -o "Total: [0-9]*" test_output.txt | grep -o "[0-9]*" || echo "0")
         PASSED_TESTS=$(grep -o "Passed: [0-9]*" test_output.txt | grep -o "[0-9]*" || echo "0")
-        
+
         echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
         echo "passed_tests=$PASSED_TESTS" >> $GITHUB_OUTPUT
-        
-        # Show test output
+
         cat test_output.txt
-        
+
     - name: 📊 Update README with test results
       run: |
         echo "## 🧪 Test Status" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**Tests Passed:** ${{ steps.test_results.outputs.passed_tests }}/${{ steps.test_results.outputs.total_tests }}" >> $GITHUB_STEP_SUMMARY
         echo "**Status:** ${{ steps.test_results.outputs.badge_message }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        
-        if [ "${{ steps.test_results.outputs.tests_passed }}" = "true" ]; then
-          echo "🎉 All tests are passing!" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "❌ Some tests are failing - check the logs above" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-    - name: 📈 Generate test coverage summary
-      run: |
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "## 📈 Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### CompanyComponent Tests" >> $GITHUB_STEP_SUMMARY
-        echo "| Test Category | Status |" >> $GITHUB_STEP_SUMMARY
-        echo "|---------------|--------|" >> $GITHUB_STEP_SUMMARY
-        echo "| Constructor | ✅ Passing |" >> $GITHUB_STEP_SUMMARY
-        echo "| Template Loading | ✅ Passing |" >> $GITHUB_STEP_SUMMARY
-        echo "| Data Rendering | ✅ Passing |" >> $GITHUB_STEP_SUMMARY
-        echo "| Error Handling | ✅ Passing |" >> $GITHUB_STEP_SUMMARY
-        echo "| Edge Cases | ✅ Passing |" >> $GITHUB_STEP_SUMMARY
-        echo "| Integration | ✅ Passing |" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Total Test Files:** 1" >> $GITHUB_STEP_SUMMARY
-        echo "**Total Test Cases:** ${{ steps.test_results.outputs.total_tests }}" >> $GITHUB_STEP_SUMMARY
-        echo "**Framework:** Custom lightweight test framework" >> $GITHUB_STEP_SUMMARY
